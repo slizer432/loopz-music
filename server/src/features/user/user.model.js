@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, minlength: 3 },
     username: { type: String, required: true, unique: true, minlength: 3 },
     password: { type: String, required: true, minlength: 8 },
     email: { type: String, required: true, unique: true },
@@ -28,4 +27,5 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
 };
 
 const User = mongoose.model("User", userSchema);
+
 export default User;
