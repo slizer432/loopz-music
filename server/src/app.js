@@ -4,6 +4,7 @@ import connectDB from "./config/db.js";
 
 import userRoutes from "./features/user/user.routes.js";
 import authRoutes from "./features/auth/auth.routes.js";
+import profileRoutes from "./features/profile/profile.routes.js";
 
 connectDB();
 
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/profiles", profileRoutes);
 // Placeholder for more routes
 
 export default app;

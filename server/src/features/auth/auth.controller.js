@@ -50,6 +50,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ error: "Email already registered" });
     }
     const user = await User.create({ username, email, password });
+    const profile = await Profile.create({ user: user._id });
     const token = generateToken(user._id);
 
     res.status(201).json({
@@ -63,4 +64,8 @@ export const register = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+export const logout = (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
 };
