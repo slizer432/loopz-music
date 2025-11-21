@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import User from "../features/user/user.model.js";
-import Profile from "../features/profile/profile.model.js";
+import * as userHelpers from "../utils/userHelpers.js";
 
 dotenv.config();
 
@@ -14,10 +13,7 @@ export const protect = async (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const profile = await Profile.findOne({ user: decoded.id }).populate(
-      "user",
-      ["-password", "-createdAt", "-updatedAt", "-__v", "-_id"]
-    );
+    const profile = await userHelpers.getUserData(decoded.id);
 
     if (!profile) {
       return res
@@ -25,11 +21,7 @@ export const protect = async (req, res, next) => {
         .json({ message: "Not authorized, user not found" });
     }
 
-    req.user = {
-      ...profile.toObject(),
-      ...profile.user.toObject(),
-    };
-    delete req.user.user;
+    req.user = profile;
 
     next();
   } catch (error) {

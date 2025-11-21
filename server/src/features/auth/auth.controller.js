@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../user/user.model.js";
 import dotenv from "dotenv";
+import Profile from "../profile/profile.model.js";
 
 dotenv.config();
 
@@ -38,7 +39,7 @@ export const login = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, name } = req.body;
 
   try {
     const emailExists = await User.findOne({ email });
@@ -50,12 +51,16 @@ export const register = async (req, res) => {
       return res.status(400).json({ error: "Email already registered" });
     }
     const user = await User.create({ username, email, password });
-    const profile = await Profile.create({ user: user._id });
+    const profile = await Profile.create({
+      user: user._id,
+      name: name,
+    });
     const token = generateToken(user._id);
 
     res.status(201).json({
       user: {
         id: user._id,
+        name: profile.name,
         username: user.username,
         email: user.email,
       },

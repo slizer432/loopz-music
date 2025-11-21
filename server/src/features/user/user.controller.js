@@ -1,12 +1,12 @@
 import User from "./user.model.js";
+import * as userHelpers from "../../utils/userHelpers.js";
 
 export const createUser = async (req, res) => {
   try {
     const user = await User.create(req.body);
     res.status(201).json({
       id: user._id,
-      name: user.name,
-      username: user.name,
+      username: user.username,
       email: user.email,
     });
   } catch (error) {
@@ -24,17 +24,31 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const getLoggedInUser = async (req, res) => {
-  res.status(200).json(req.user);
+  res.status(200).json({
+    user: req.user,
+  });
 };
 
-// export const updateUser = async (req, res) => {
-//   try {
-//     const {username, email} = req.body;
-//     const user = await user.findByIdAndUpdate(req.params.id, {username, email}, {new:});
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found"});
-//     } else {
+export const getUserInfo = async (req, res) => {
+  try {
+    const user = await userHelpers.getUserData(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-//     }
-//   }
-// }
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
